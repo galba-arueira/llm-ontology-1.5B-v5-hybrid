@@ -1,0 +1,1213 @@
+@prefix rdf:    <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs:   <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl:    <http://www.w3.org/2002/07/owl#> .
+@prefix xsd:    <http://www.w3.org/2001/XMLSchema#> .
+@prefix foaf:   <http://xmlns.com/foaf/0.1/> .
+@prefix prov:   <http://www.w3.org/ns/prov#> .
+@prefix vcard:  <http://www.w3.org/2006/vcard/ns#> .
+@prefix geo:    <http://www.w3.org/2003/01/geo/wgs84_pos#> .
+@prefix schema: <https://schema.org/> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix v5:  <https://ontology.v5.com/v5core#> .
+
+@base <https://ontology.v5.com/v5core#> .
+
+<https://ontology.v5.com/v5core> a owl:Ontology ;
+  rdfs:label "Ontologia v5 Core"@pt ,
+             "v5 Core Ontology"@en ;
+  owl:versionInfo "0.1.0" ;
+  dcterms:creator "Galba Arueira" ;
+  dcterms:created "2025-11-20"^^xsd:date ;
+  rdfs:comment "Ontologia núcleo para o v5, cobrindo Casos, Alvos, Telefones, UFDR, WhatsApp, Detran e Arquivos."@pt ;
+  owl:imports <http://xmlns.com/foaf/0.1/> ,
+              <http://www.w3.org/ns/prov-o#> ,
+              <http://www.w3.org/2006/vcard/ns#> ,
+              <http://www.w3.org/2003/01/geo/wgs84_pos#> ,
+              <https://schema.org/> .
+
+########################
+# CLASSES PRINCIPAIS  #
+########################
+
+### Núcleo investigativo
+
+v5:Case a owl:Class ;
+  rdfs:subClassOf prov:Entity ;
+  rdfs:label "Caso"@pt , "Case"@en , "processo"@pt , "investigação"@pt , "procedimento"@pt ;
+  rdfs:comment "Investigação ou processo legal contendo alvos, evidências e relatórios."@pt ;
+  v5:hasImportantProperty "caseNumber" .
+
+v5:Incident a owl:Class ;
+  rdfs:subClassOf prov:Entity ;
+  rdfs:label "Ocorrência"@pt , "Incident"@en ;
+  rdfs:comment "Ocorrência policial, denúncia, boletim ou fato correlato a um caso."@pt .
+
+v5:Target a owl:Class ;
+  rdfs:subClassOf foaf:Agent ;
+  rdfs:label "Alvo"@pt , "Target"@en , "investigado"@pt , "suspeito"@pt ;
+  rdfs:comment "Pessoa física ou jurídica foco de investigação."@pt .
+
+v5:TargetPerson a owl:Class ;
+  rdfs:subClassOf v5:Target , foaf:Person ;
+  rdfs:label "Alvo Pessoa"@pt , "Target Person"@en , "dono"@pt , "proprietário"@pt , "pessoa"@pt , "pessoas"@pt , "indivíduo"@pt , "investigado"@pt ;
+  rdfs:comment "Pessoa física identificada como alvo em um ou mais casos."@pt ;
+  v5:hasImportantProperty "cpf" .
+  
+
+v5:TargetOrganization a owl:Class ;
+  rdfs:subClassOf v5:Target , schema:Organization ;
+  rdfs:label "Alvo Organização"@pt , "Target Organization"@en , "empresa"@pt , "organização"@pt , "entidade"@pt ;
+  rdfs:comment "Pessoa jurídica ou organização alvo de investigação."@pt .
+
+v5:CriminalOrganization a owl:Class ;
+  rdfs:subClassOf v5:TargetOrganization ;
+  rdfs:label "Organização Criminosa"@pt , "Criminal Organization"@en ;
+  rdfs:comment "Grupo formal ou informal reconhecido como organização criminosa."@pt .
+
+v5:Unit a owl:Class ;
+  rdfs:subClassOf foaf:Organization ;
+  rdfs:label "Unidade"@pt , "Unit"@en ;
+  rdfs:comment "Unidade policial ou órgão responsável pelo caso ou ocorrência."@pt .
+
+v5:User a owl:Class ;
+  rdfs:subClassOf foaf:Person ;
+  rdfs:label "Usuário v5"@pt , "v5 User"@en ;
+  rdfs:comment "Usuário do sistema v5, agente humano autenticado."@pt .
+
+### Localização
+
+v5:Location a owl:Class ;
+  rdfs:subClassOf geo:SpatialThing ;
+  rdfs:label "Localização"@pt , "Location"@en ;
+  rdfs:comment "Localização geográfica relevante para casos, ocorrências ou movimentos de veículos."@pt .
+
+### Telefones e dispositivos
+
+v5:PhoneNumber a owl:Class ;
+  rdfs:subClassOf vcard:Telephone ;
+  rdfs:label "Número de Telefone"@pt , "Phone Number"@en , "celular"@pt , "telefone"@pt ;
+  rdfs:comment "Número de telefone associado a um alvo, dispositivo ou conta de comunicação."@pt .
+
+v5:Device a owl:Class ;
+  rdfs:subClassOf prov:Entity ;
+  rdfs:label "Dispositivo"@pt , "Device"@en , "aparelho"@pt , "equipamento"@pt ;
+  rdfs:comment "Dispositivo físico, como smartphone, tablet ou outro equipamento digital."@pt .
+
+### UFDR e comunicações
+
+v5:DeviceExtraction a owl:Class ;
+  rdfs:subClassOf prov:Activity ;
+  rdfs:label "Extração de Dispositivo"@pt , "Device Extraction"@en ;
+  rdfs:comment "Procedimento de extração de dados de um dispositivo, como relatórios UFDR."@pt .
+
+v5:UFDRExtraction a owl:Class ;
+  rdfs:subClassOf v5:DeviceExtraction ;
+  rdfs:label "Extração UFDR"@pt , "UFDR Extraction"@en ;
+  rdfs:comment "Extração de dados realizada por ferramenta Cellebrite UFDR."@pt .
+
+v5:WhatsAppChat a owl:Class ;
+  rdfs:subClassOf prov:Entity ;
+  rdfs:label "Chat WhatsApp"@pt , "WhatsApp Chat"@en ;
+  rdfs:comment "Conversa ou grupo de WhatsApp extraído de um dispositivo ou fonte externa."@pt .
+
+v5:WhatsAppMessage a owl:Class ;
+  rdfs:subClassOf v5:Communication ;
+  rdfs:label "Mensagem WhatsApp"@pt , "WhatsApp Message"@en ;
+  rdfs:comment "Mensagem individual de WhatsApp, associada a um chat e participantes."@pt .
+
+v5:WhatsAppGroup a owl:Class ;
+  rdfs:subClassOf v5:WhatsAppChat ;
+  rdfs:label "Grupo WhatsApp"@pt , "WhatsApp Group"@en ;
+  rdfs:comment "Grupo de WhatsApp com múltiplos participantes."@pt .
+
+v5:WhatsAppContact a owl:Class ;
+  rdfs:subClassOf v5:Contact ;
+  rdfs:label "Contato WhatsApp"@pt , "WhatsApp Contact"@en ;
+  rdfs:comment "Contato de WhatsApp identificado em um dispositivo ou conta."@pt .
+
+### Comunicação genérica
+
+v5:Communication a owl:Class ;
+  rdfs:subClassOf prov:Entity ;
+  rdfs:label "Comunicação"@pt , "Communication"@en ;
+  rdfs:comment "Abstração para comunicações (mensagens, ligações, etc.)."@pt .
+
+v5:Contact a owl:Class ;
+  rdfs:subClassOf foaf:Agent ;
+  rdfs:label "Contato"@pt , "Contact"@en ;
+  rdfs:comment "Contato genérico (agenda, rede social, etc.)."@pt .
+
+### Evidências e arquivos
+
+v5:EvidenceItem a owl:Class ;
+  rdfs:subClassOf prov:Entity ;
+  rdfs:label "Item de Evidência"@pt , "Evidence Item"@en ;
+  rdfs:comment "Item de evidência associado a um caso (digital ou documental)."@pt .
+
+v5:DigitalEvidence a owl:Class ;
+  rdfs:subClassOf v5:EvidenceItem ;
+  rdfs:label "Evidência Digital"@pt , "Digital Evidence"@en ;
+  rdfs:comment "Evidência em formato digital, como arquivos, logs, mídias extraídas."@pt .
+
+v5:File a owl:Class ;
+  rdfs:subClassOf v5:DigitalEvidence ;
+  rdfs:label "Arquivo"@pt , "File"@en ;
+  rdfs:comment "Arquivo digital armazenado ou referenciado pelo v5."@pt .
+
+v5:ImageFile a owl:Class ;
+  rdfs:subClassOf v5:File ;
+  rdfs:label "Arquivo de Imagem"@pt , "Image File"@en ;
+  rdfs:comment "Arquivo de imagem digital (foto, captura de tela, etc.)."@pt .
+
+v5:VideoFile a owl:Class ;
+  rdfs:subClassOf v5:File ;
+  rdfs:label "Arquivo de Vídeo"@pt , "Video File"@en ;
+  rdfs:comment "Arquivo de vídeo digital."@pt .
+
+v5:AudioFile a owl:Class ;
+  rdfs:subClassOf v5:File ;
+  rdfs:label "Arquivo de Áudio"@pt , "Audio File"@en ;
+  rdfs:comment "Arquivo de áudio digital."@pt .
+
+v5:DocumentFile a owl:Class ;
+  rdfs:subClassOf v5:File ;
+  rdfs:label "Documento Digital"@pt , "Document File"@en ;
+  rdfs:comment "Documento digital (PDF, DOC, planilha, etc.)."@pt .
+
+v5:OCRTextSegment a owl:Class ;
+  rdfs:subClassOf v5:DigitalEvidence ;
+  rdfs:label "Segmento OCR"@pt , "OCR Text Segment"@en ;
+  rdfs:comment "Trecho de texto resultante de OCR aplicado a uma imagem ou documento."@pt .
+
+v5:FaceImage a owl:Class ;
+  rdfs:subClassOf v5:ImageFile ;
+  rdfs:label "Imagem Facial"@pt , "Face Image"@en ;
+  rdfs:comment "Imagem contendo rosto(s) utilizada para reconhecimento ou análise facial."@pt .
+
+v5:FaceBiometricTemplate a owl:Class ;
+  rdfs:subClassOf v5:DigitalEvidence ;
+  rdfs:label "Template Biométrico Facial"@pt , "Face Biometric Template"@en ;
+  rdfs:comment "Representação matemática de características faciais para biometria."@pt .
+
+### Veículos / Detran
+
+v5:Vehicle a owl:Class ;
+  rdfs:subClassOf prov:Entity ;
+  rdfs:label "Veículo"@pt , "Vehicle"@en , "carro"@pt , "carros"@pt , "moto"@pt , "motos"@pt , "caminhão"@pt , "veículo"@pt , "veículos"@pt , "automóvel"@pt , "automóveis"@pt ;
+  rdfs:comment "Veículo automotor registrado em órgão de trânsito."@pt .
+
+v5:LicensePlate a owl:Class ;
+  rdfs:subClassOf prov:Entity ;
+  rdfs:label "Placa Veicular"@pt , "Placa"@pt , "License Plate"@en ;
+  v5:compositeExamplePattern "Quem é o dono do veículo de placa <VALOR>|Quem é o dono do carro de placa <VALOR>|Buscar dono do carro com placa <VALOR>"@pt , "Who is the owner of the vehicle with plate <VALOR>|Who is the owner of the car with plate <VALOR>|Find the car owner with plate <VALOR>"@en ;
+  v5:hasImportantProperty "licensePlateNumber" .
+
+v5:VehicleRegistration a owl:Class ;
+  rdfs:subClassOf prov:Entity ;
+  rdfs:label "Registro de Veículo"@pt , "Vehicle Registration"@en ;
+  rdfs:comment "Registro administrativo do veículo (ex.: RENAVAM, cadastro no DETRAN)."@pt .
+
+v5:VehicleMovement a owl:Class ;
+  rdfs:subClassOf prov:Activity ;
+  rdfs:label "Movimentação de Veículo"@pt , "Vehicle Movement"@en ;
+  rdfs:comment "Evento de movimentação ou uso do veículo (passagem em câmera, blitz, abordagem etc.)."@pt .
+
+########################
+# DISJOINTS            #
+########################
+
+v5:Case owl:disjointWith v5:Target ,
+                         v5:Device ,
+                         v5:Vehicle ,
+                         v5:EvidenceItem .
+
+v5:Vehicle owl:disjointWith foaf:Person ,
+                               v5:Case ,
+                               v5:Device .
+
+v5:FaceBiometricTemplate owl:disjointWith v5:ImageFile .
+
+########################
+# OBJECT PROPERTIES    #
+########################
+
+### Casos e alvos
+
+v5:hasTarget a owl:ObjectProperty ;
+  rdfs:domain v5:Case ;
+  rdfs:range v5:Target ;
+  owl:inverseOf v5:isTargetOf ;
+  rdfs:label "tem alvo"@pt , "has target"@en .
+
+v5:isTargetOf a owl:ObjectProperty ;
+  rdfs:domain v5:Target ;
+  rdfs:range v5:Case ;
+  rdfs:label "é alvo de"@pt , "is target of"@en .
+
+v5:handledByUnit a owl:ObjectProperty ;
+  rdfs:domain v5:Case ;
+  rdfs:range v5:Unit ;
+  rdfs:label "é conduzido por unidade"@pt , "handled by unit"@en .
+
+v5:hasIncident a owl:ObjectProperty ;
+  rdfs:domain v5:Case ;
+  rdfs:range v5:Incident ;
+  rdfs:label "tem ocorrência"@pt , "has incident"@en .
+
+v5:relatesToCase a owl:ObjectProperty ;
+  rdfs:domain v5:Incident ;
+  rdfs:range v5:Case ;
+  rdfs:label "relaciona-se ao caso"@pt , "relates to case"@en .
+
+v5:memberOfOrganization a owl:ObjectProperty ;
+  rdfs:domain v5:TargetPerson ;
+  rdfs:range v5:CriminalOrganization ;
+  rdfs:label "membro de organização criminosa"@pt ,
+             "member of criminal organization"@en .
+
+### Telefones, dispositivos e comunicação
+
+v5:hasPhoneNumber a owl:ObjectProperty ;
+  rdfs:domain v5:Target ;
+  rdfs:range v5:PhoneNumber ;
+  rdfs:label "tem número de telefone"@pt ,
+             "has phone number"@en .
+
+v5:usesDevice a owl:ObjectProperty ;
+  rdfs:domain v5:Target ;
+  rdfs:range v5:Device ;
+  rdfs:label "usa dispositivo"@pt ,
+             "uses device"@en .
+
+v5:wasExtractedFromDevice a owl:ObjectProperty ;
+  rdfs:domain v5:DeviceExtraction ;
+  rdfs:range v5:Device ;
+  rdfs:label "foi extraída de dispositivo"@pt ,
+             "was extracted from device"@en .
+
+v5:producedDigitalEvidence a owl:ObjectProperty ;
+  rdfs:domain v5:DeviceExtraction ;
+  rdfs:range v5:DigitalEvidence ;
+  rdfs:label "produziu evidência digital"@pt ,
+             "produced digital evidence"@en .
+
+v5:belongsToExtraction a owl:ObjectProperty ;
+  rdfs:domain v5:DigitalEvidence ;
+  rdfs:range v5:DeviceExtraction ;
+  rdfs:label "pertence à extração"@pt ,
+             "belongs to extraction"@en .
+
+v5:hasChat a owl:ObjectProperty ;
+  rdfs:domain v5:DeviceExtraction ;
+  rdfs:range v5:WhatsAppChat ;
+  rdfs:label "possui chat WhatsApp"@pt ,
+             "has WhatsApp chat"@en .
+
+v5:hasMessage a owl:ObjectProperty ;
+  rdfs:domain v5:WhatsAppChat ;
+  rdfs:range v5:WhatsAppMessage ;
+  rdfs:label "possui mensagem"@pt ,
+             "has message"@en .
+
+v5:sentBy a owl:ObjectProperty ;
+  rdfs:domain v5:WhatsAppMessage ;
+  rdfs:range v5:Target ;
+  rdfs:label "enviada por"@pt , "sent by"@en .
+
+v5:sentTo a owl:ObjectProperty ;
+  rdfs:domain v5:WhatsAppMessage ;
+  rdfs:range v5:Target ;
+  rdfs:label "enviada para"@pt , "sent to"@en .
+
+v5:hasParticipant a owl:ObjectProperty ;
+  rdfs:domain v5:WhatsAppChat ;
+  rdfs:range v5:Target ;
+  rdfs:label "tem participante"@pt , "has participant"@en .
+
+### Evidências e arquivos
+
+v5:hasEvidence a owl:ObjectProperty ;
+  rdfs:domain v5:Case ;
+  rdfs:range v5:EvidenceItem ;
+  rdfs:label "tem evidência"@pt , "has evidence"@en .
+
+v5:hasFile a owl:ObjectProperty ;
+  rdfs:domain v5:EvidenceItem ;
+  rdfs:range v5:File ;
+  rdfs:label "tem arquivo"@pt , "has file"@en .
+
+v5:hasOCRText a owl:ObjectProperty ;
+  rdfs:domain v5:EvidenceItem ;
+  rdfs:range v5:OCRTextSegment ;
+  rdfs:label "tem texto OCR"@pt , "has OCR text"@en .
+
+v5:hasFaceImage a owl:ObjectProperty ;
+  rdfs:domain v5:EvidenceItem ;
+  rdfs:range v5:FaceImage ;
+  rdfs:label "tem imagem facial"@pt , "has face image"@en .
+
+v5:hasFaceTemplate a owl:ObjectProperty ;
+  rdfs:domain v5:EvidenceItem ;
+  rdfs:range v5:FaceBiometricTemplate ;
+  rdfs:label "tem template facial"@pt , "has face template"@en .
+
+v5:depictsPerson a owl:ObjectProperty ;
+  rdfs:domain v5:FaceImage ;
+  rdfs:range v5:TargetPerson ;
+  rdfs:label "retrata pessoa"@pt , "depicts person"@en .
+
+### Veículos / Detran
+
+v5:ownsVehicle a owl:ObjectProperty ;
+  rdfs:domain v5:Target ;
+  rdfs:range v5:Vehicle ;
+  owl:inverseOf v5:isOwnedBy ;
+  rdfs:label "possui veículo"@pt , "owns vehicle"@en .
+
+v5:isOwnedBy a owl:ObjectProperty ;
+  rdfs:domain v5:Vehicle ;
+  rdfs:range v5:Target ;
+  rdfs:label "é de propriedade de"@pt , "is owned by"@en .
+
+v5:hasLicensePlate a owl:ObjectProperty ;
+  rdfs:domain v5:Vehicle ;
+  rdfs:range v5:LicensePlate ;
+  owl:inverseOf v5:isLicensePlateOf ;
+  rdfs:label "tem placa"@pt , "has license plate"@en .
+
+v5:isLicensePlateOf a owl:ObjectProperty ;
+  rdfs:domain v5:LicensePlate ;
+  rdfs:range v5:Vehicle ;
+  rdfs:label "é placa de"@pt , "is license plate of"@en .
+
+v5:hasVehicleRegistration a owl:ObjectProperty ;
+  rdfs:domain v5:Vehicle ;
+  rdfs:range v5:VehicleRegistration ;
+  rdfs:label "tem registro veicular"@pt , "has vehicle registration"@en .
+
+v5:hasMovementRecord a owl:ObjectProperty ;
+  rdfs:domain v5:Vehicle ;
+  rdfs:range v5:VehicleMovement ;
+  rdfs:label "tem movimentação"@pt , "has movement record"@en .
+
+v5:movementAtLocation a owl:ObjectProperty ;
+  rdfs:domain v5:VehicleMovement ;
+  rdfs:range v5:Location ;
+  rdfs:label "movimentação em local"@pt , "movement at location"@en .
+
+### Localização
+
+v5:hasLocation a owl:ObjectProperty ;
+  rdfs:domain prov:Entity ;
+  rdfs:range v5:Location ;
+  rdfs:label "ocorre em"@pt , "occurs at"@en .
+
+########################
+# DATATYPE PROPERTIES  #
+########################
+
+### Casos
+
+v5:caseNumber a owl:DatatypeProperty ;
+  rdfs:domain v5:Case ;
+  rdfs:range xsd:string ;
+  rdfs:label "número do caso"@pt , "case number"@en .
+
+v5:caseName a owl:DatatypeProperty ;
+  rdfs:domain v5:Case ;
+  rdfs:range xsd:string ;
+  rdfs:label "nome do caso"@pt , "case name"@en .
+
+v5:caseStatus a owl:DatatypeProperty ;
+  rdfs:domain v5:Case ;
+  rdfs:range xsd:string ;
+  rdfs:label "status do caso"@pt , "case status"@en .
+
+### Alvos
+
+v5:personFullName a owl:DatatypeProperty ;
+  rdfs:domain v5:TargetPerson ;
+  rdfs:range xsd:string ;
+  rdfs:label "nome completo"@pt , "full name"@en , "nome"@pt .
+
+v5:cpf a owl:DatatypeProperty ;
+  rdfs:domain v5:TargetPerson ;
+  rdfs:range xsd:string ;
+  rdfs:label "CPF"@pt , "CPF"@en ;
+  v5:normalizationType "numeric" ;
+  v5:propertyPriority 1 ;
+  v5:examplePattern "12345678900|98765432100|Localizar investigado com CPF <VALOR>" .
+
+v5:cnpj a owl:DatatypeProperty ;
+  rdfs:domain v5:TargetOrganization ;
+  rdfs:range xsd:string ;
+  rdfs:label "CNPJ"@pt , "CNPJ"@en .
+
+v5:dateOfBirth a owl:DatatypeProperty ;
+  rdfs:domain v5:TargetPerson ;
+  rdfs:range xsd:date ;
+  rdfs:label "data de nascimento"@pt , "date of birth"@en , "nascimento"@pt , "data nascimento"@pt , "aniversário"@pt .
+
+### Telefones e dispositivos
+
+v5:phoneNumberValue a owl:DatatypeProperty ;
+  rdfs:domain v5:PhoneNumber ;
+  rdfs:range xsd:string ;
+  rdfs:label "número MSISDN"@pt , "MSISDN number"@en , "número"@pt , "número de telefone"@pt .
+
+v5:deviceIMEI a owl:DatatypeProperty ;
+  rdfs:domain v5:Device ;
+  rdfs:range xsd:string ;
+  rdfs:label "IMEI"@pt , "IMEI"@en , "imei"@pt .
+
+v5:deviceModel a owl:DatatypeProperty ;
+  rdfs:domain v5:Device ;
+  rdfs:range xsd:string ;
+  rdfs:label "modelo do dispositivo"@pt , "device model"@en , "modelo"@pt , "modelo aparelho"@pt .
+
+### Mensagens / comunicação
+
+v5:messageBody a owl:DatatypeProperty ;
+  rdfs:domain v5:WhatsAppMessage ;
+  rdfs:range xsd:string ;
+  rdfs:label "corpo da mensagem"@pt , "message body"@en , "mensagem"@pt , "texto"@pt , "conteúdo"@pt .
+
+v5:messageTimestamp a owl:DatatypeProperty ;
+  rdfs:domain v5:WhatsAppMessage ;
+  rdfs:range xsd:dateTime ;
+  rdfs:label "data/hora da mensagem"@pt , "message timestamp"@en , "quando"@pt , "data mensagem"@pt , "hora mensagem"@pt .
+
+### Arquivos / evidências
+
+v5:filePath a owl:DatatypeProperty ;
+  rdfs:domain v5:File ;
+  rdfs:range xsd:string ;
+  rdfs:label "caminho do arquivo"@pt , "file path"@en .
+
+v5:fileHash a owl:DatatypeProperty ;
+  rdfs:domain v5:File ;
+  rdfs:range xsd:string ;
+  rdfs:label "hash do arquivo"@pt , "file hash"@en .
+
+v5:fileMimeType a owl:DatatypeProperty ;
+  rdfs:domain v5:File ;
+  rdfs:range xsd:string ;
+  rdfs:label "MIME type"@pt , "MIME type"@en .
+
+v5:ocrText a owl:DatatypeProperty ;
+  rdfs:domain v5:OCRTextSegment ;
+  rdfs:range xsd:string ;
+  rdfs:label "texto OCR"@pt , "OCR text"@en .
+
+### Biometria facial
+
+v5:biometricTemplateType a owl:DatatypeProperty ;
+  rdfs:domain v5:FaceBiometricTemplate ;
+  rdfs:range xsd:string ;
+  rdfs:label "tipo de template biométrico"@pt ,
+             "biometric template type"@en .
+
+v5:biometricTemplateData a owl:DatatypeProperty ;
+  rdfs:domain v5:FaceBiometricTemplate ;
+  rdfs:range xsd:string ;
+  rdfs:label "dados do template biométrico (codificado)"@pt ,
+             "biometric template data (encoded)"@en .
+
+### Veículos / Detran
+
+v5:licensePlateNumber a owl:DatatypeProperty ;
+  rdfs:domain v5:LicensePlate ;
+  rdfs:range xsd:string ;
+  rdfs:label "número da placa"@pt , "license plate number"@en , "placa"@pt ;
+  v5:normalizationType "alphanumeric" ;
+  v5:propertyPriority 1 ;
+  v5:examplePattern "ABC1234|ABC-1234|XYZ-9876|placa <VALOR>|dono do veículo de placa <VALOR>|dono do carro de placa <VALOR>" .
+
+v5:renavam a owl:DatatypeProperty ;
+  rdfs:domain v5:VehicleRegistration ;
+  rdfs:range xsd:string ;
+  rdfs:label "RENAVAM"@pt , "RENAVAM"@en , "renavam"@pt ;
+  v5:normalizationType "numeric" ;
+  v5:propertyPriority 1 ;
+  v5:examplePattern "12345678901|98765432100" .
+
+v5:chassisNumber a owl:DatatypeProperty ;
+  rdfs:domain v5:Vehicle ;
+  rdfs:range xsd:string ;
+  rdfs:label "chassi"@pt , "chassis"@en , "número do chassi"@pt .
+
+v5:vehicleBrand a owl:DatatypeProperty ;
+  rdfs:domain v5:Vehicle ;
+  rdfs:range xsd:string ;
+  rdfs:label "marca do veículo"@pt , "marca"@pt , "vehicle brand"@en .
+
+v5:vehicleModel a owl:DatatypeProperty ;
+  rdfs:domain v5:Vehicle ;
+  rdfs:range xsd:string ;
+  rdfs:label "modelo do veículo"@pt , "modelo"@pt , "vehicle model"@en .
+
+v5:vehicleYear a owl:DatatypeProperty ;
+  rdfs:domain v5:Vehicle ;
+  rdfs:range xsd:gYear ;
+  rdfs:label "ano do veículo"@pt , "vehicle year"@en , "ano"@pt .
+
+v5:movementTimestamp a owl:DatatypeProperty ;
+  rdfs:domain v5:VehicleMovement ;
+  rdfs:range xsd:dateTime ;
+  rdfs:label "data/hora da movimentação"@pt ,
+             "movement timestamp"@en ,
+             "quando"@pt ,
+             "data movimento"@pt .
+#############################
+# PROPRIEDADES DE ALTO NÍVEL
+#############################
+
+### Caso envolve alvo
+
+v5:involvesTarget a owl:ObjectProperty ;
+  rdfs:domain v5:Case ;
+  rdfs:range v5:Target ;
+  rdfs:label "envolve alvo"@pt , "involves target"@en .
+
+### Caso envolve veículo
+
+v5:involvesVehicle a owl:ObjectProperty ;
+  rdfs:domain v5:Case ;
+  rdfs:range v5:Vehicle ;
+  rdfs:label "envolve veículo"@pt , "involves vehicle"@en .
+
+### Caso envolve comunicação (mensagem, ligação etc.)
+
+v5:involvesCommunication a owl:ObjectProperty ;
+  rdfs:domain v5:Case ;
+  rdfs:range v5:Communication ;
+  rdfs:label "envolve comunicação"@pt , "involves communication"@en .
+
+### Alvo se comunicou com outro alvo
+
+v5:communicatedWith a owl:ObjectProperty , owl:SymmetricProperty ;
+  rdfs:domain v5:Target ;
+  rdfs:range v5:Target ;
+  rdfs:label "se comunicou com"@pt , "communicated with"@en .
+
+#############################
+# RESTRIÇÕES DE TIPO (EXEMPLOS)
+#############################
+
+# Toda mensagem de WhatsApp:
+# - é enviada por pelo menos um alvo
+# - pertence a pelo menos um chat
+
+v5:WhatsAppMessage rdfs:subClassOf
+  [ a owl:Restriction ;
+    owl:onProperty v5:sentBy ;
+    owl:someValuesFrom v5:Target
+  ] ,
+  [ a owl:Restriction ;
+    owl:onProperty v5:belongsToChat ;
+    owl:someValuesFrom v5:WhatsAppChat
+  ] .
+
+# Defina a propriedade belongsToChat se ainda não existir:
+v5:belongsToChat a owl:ObjectProperty ;
+  rdfs:domain v5:WhatsAppMessage ;
+  rdfs:range v5:WhatsAppChat ;
+  rdfs:label "pertence ao chat"@pt , "belongs to chat"@en .
+
+
+#############################
+# CHAINS: CASO -> MENSAGEM -> ALVO
+#############################
+
+# 1) Caso -> Mensagens ligadas a ele
+# Cria propriedade intermediária: hasMessageEvidence
+
+v5:hasMessageEvidence a owl:ObjectProperty ;
+  rdfs:label "tem mensagem como evidência"@pt ,
+             "has message evidence"@en ;
+  rdfs:domain v5:Case ;
+  rdfs:range  v5:WhatsAppMessage .
+
+# hasEvidence o belongsToExtraction o hasChat o hasMessage
+#   ⊑ hasMessageEvidence
+#
+# (lido: se um Caso tem Evidência, que pertence a uma Extração,
+#        que tem um Chat com uma Mensagem, então o Caso tem essa Mensagem como evidência)
+
+v5:hasMessageEvidence owl:propertyChainAxiom (
+  v5:hasEvidence
+  v5:belongsToExtraction
+  v5:hasChat
+  v5:hasMessage
+) .
+
+# 2) Caso com mensagem enviada por um alvo -> envolve esse alvo
+# hasMessageEvidence o sentBy ⊑ involvesTarget
+
+v5:involvesTarget owl:propertyChainAxiom (
+  v5:hasMessageEvidence
+  v5:sentBy
+) .
+
+
+#############################
+# CHAINS: CASO -> IMAGEM FACIAL -> PESSOA
+#############################
+
+# hasEvidence o hasFaceImage o depictsPerson ⊑ involvesTarget
+
+v5:involvesTarget owl:propertyChainAxiom (
+  v5:hasEvidence
+  v5:hasFaceImage
+  v5:depictsPerson
+) .
+
+#############################
+# CHAINS: CASO -> VEÍCULO -> ALVO
+#############################
+
+# Propriedade auxiliar: hasVehicleEvidence
+v5:hasVehicleEvidence a owl:ObjectProperty ;
+  rdfs:label "tem veículo como evidência"@pt ,
+             "has vehicle as evidence"@en ;
+  rdfs:domain v5:Case ;
+  rdfs:range  v5:Vehicle .
+
+# Supondo que certas evidências sejam diretamente do tipo Vehicle (ou relacionadas):
+# hasEvidence o ownsVehicle^-1 ⊑ hasVehicleEvidence
+# (mais tarde, se precisar, refinamos com VehicleRegistration, Movement etc.)
+
+# Primeiro, uma propriedade inversa de ownsVehicle, se ainda não foi feita:
+v5:ownsVehicle owl:inverseOf v5:isOwnedBy .
+
+# Agora, a chain: Case --hasEvidence--> Vehicle --isOwnedBy--> Target
+# vira: Case --involvesVehicle--> Vehicle e Case --involvesTarget--> Target
+
+v5:involvesVehicle owl:propertyChainAxiom (
+  v5:hasEvidence
+) .
+
+v5:involvesTarget owl:propertyChainAxiom (
+  v5:hasEvidence
+  v5:isOwnedBy
+) .
+
+
+#############################
+# ESPECIALIZAÇÕES DE HAS TARGET
+#############################
+
+v5:hasPrimaryTarget a owl:ObjectProperty ;
+  rdfs:subPropertyOf v5:hasTarget ;
+  rdfs:domain v5:Case ;
+  rdfs:range v5:Target ;
+  rdfs:label "tem alvo principal"@pt , "has primary target"@en .
+
+v5:hasSuspectTarget a owl:ObjectProperty ;
+  rdfs:subPropertyOf v5:hasTarget ;
+  rdfs:domain v5:Case ;
+  rdfs:range v5:TargetPerson ;
+  rdfs:label "tem alvo suspeito"@pt , "has suspect target"@en .
+
+v5:hasVictimTarget a owl:ObjectProperty ;
+  rdfs:subPropertyOf v5:hasTarget ;
+  rdfs:domain v5:Case ;
+  rdfs:range v5:TargetPerson ;
+  rdfs:label "tem alvo vítima"@pt , "has victim target"@en .
+
+v5:hasWitnessTarget a owl:ObjectProperty ;
+  rdfs:subPropertyOf v5:hasTarget ;
+  rdfs:domain v5:Case ;
+  rdfs:range v5:TargetPerson ;
+  rdfs:label "tem alvo testemunha"@pt , "has witness target"@en .
+
+# Nome alternativo para isTargetOf (semântica igual, ajuda a leitura)
+v5:participatesInCase a owl:ObjectProperty ;
+  owl:equivalentProperty v5:isTargetOf ;
+  rdfs:label "participa do caso"@pt , "participates in case"@en ;
+  rdfs:domain v5:Target ;
+  rdfs:range  v5:Case .
+
+#############################
+# RESTRIÇÕES EM CLASSES
+#############################
+
+# Todo Caso tem pelo menos um alvo
+v5:Case rdfs:subClassOf
+  [ a owl:Restriction ;
+    owl:onProperty v5:hasTarget ;
+    owl:someValuesFrom v5:Target
+  ] .
+
+# Todo Chat de WhatsApp tem pelo menos um participante e pelo menos uma mensagem
+v5:WhatsAppChat rdfs:subClassOf
+  [ a owl:Restriction ;
+    owl:onProperty v5:hasParticipant ;
+    owl:minCardinality "1"^^xsd:nonNegativeInteger
+  ] ,
+  [ a owl:Restriction ;
+    owl:onProperty v5:hasMessage ;
+    owl:someValuesFrom v5:WhatsAppMessage
+  ] .
+
+# Todo Veículo tem alguma placa e algum registro veicular
+v5:Vehicle rdfs:subClassOf
+  [ a owl:Restriction ;
+    owl:onProperty v5:hasLicensePlate ;
+    owl:someValuesFrom v5:LicensePlate
+  ] ,
+  [ a owl:Restriction ;
+    owl:onProperty v5:hasVehicleRegistration ;
+    owl:someValuesFrom v5:VehicleRegistration
+  ] .
+
+# Toda Movimentação de Veículo está associada a um Veículo e a uma Localização
+v5:VehicleMovement rdfs:subClassOf
+  [ a owl:Restriction ;
+    owl:onProperty v5:isMovementOf ;
+    owl:someValuesFrom v5:Vehicle
+  ] ,
+  [ a owl:Restriction ;
+    owl:onProperty v5:movementAtLocation ;
+    owl:someValuesFrom v5:Location
+  ] .
+
+#############################
+# NOVAS PROPRIEDADES AUXILIARES
+#############################
+
+# Inverso explícito de hasParticipant para chains
+v5:participatesInChat a owl:ObjectProperty ;
+  rdfs:domain v5:Target ;
+  rdfs:range v5:WhatsAppChat ;
+  owl:inverseOf v5:hasParticipant ;
+  rdfs:label "participa do chat"@pt , "participates in chat"@en .
+
+# Evidência que fala sobre um alvo
+v5:evidenceAboutTarget a owl:ObjectProperty ;
+  rdfs:domain v5:Entity ;
+  rdfs:range v5:Target ;
+  rdfs:label "é evidência sobre alvo"@pt , "is evidence about target"@en .
+
+# Caso envolve dispositivo
+v5:involvesDevice a owl:ObjectProperty ;
+  rdfs:domain v5:Case ;
+  rdfs:range v5:Device ;
+  rdfs:label "envolve dispositivo"@pt , "involves device"@en .
+
+# Inversos mais explícitos para Detran
+v5:isRegistrationOf a owl:ObjectProperty ;
+  rdfs:domain v5:VehicleRegistration ;
+  rdfs:range v5:Vehicle ;
+  owl:inverseOf v5:hasVehicleRegistration ;
+  rdfs:label "é registro de veículo"@pt , "is registration of vehicle"@en .
+
+v5:isMovementOf a owl:ObjectProperty ;
+  rdfs:domain v5:VehicleMovement ;
+  rdfs:range v5:Vehicle ;
+  owl:inverseOf v5:hasMovementRecord ;
+  rdfs:label "é movimentação de"@pt , "is movement of"@en .
+
+#############################
+# PROPERTY CHAINS – COMUNICAÇÃO
+#############################
+
+# Caso -> Mensagem (já existia hasMessageEvidence; usamos ela)
+
+# Caso que tem evidência ligada a extração, chat e mensagem -> envolve comunicação
+v5:involvesCommunication owl:propertyChainAxiom (
+  v5:hasEvidence
+  v5:belongsToExtraction
+  v5:hasChat
+  v5:hasMessage
+) .
+
+# Target que participa de um chat onde há mensagem enviada por outro Target
+# -> se comunicou com
+v5:communicatedWith owl:propertyChainAxiom (
+  v5:participatesInChat
+  v5:hasMessage
+  v5:sentBy
+) .
+
+#############################
+# PROPERTY CHAINS – DISPOSITIVOS
+#############################
+
+# Caso -> evidência -> extração -> dispositivo -> Caso envolve dispositivo
+v5:involvesDevice owl:propertyChainAxiom (
+  v5:hasEvidence
+  v5:belongsToExtraction
+  v5:wasExtractedFromDevice
+) .
+
+#############################
+# PROPERTY CHAINS – VEÍCULOS
+#############################
+
+# Caso tem evidência que é registro de veículo -> caso envolve veículo
+v5:involvesVehicle owl:propertyChainAxiom (
+  v5:hasEvidence
+  v5:isRegistrationOf
+) .
+
+# Caso tem evidência que é movimentação de veículo -> caso envolve veículo
+v5:involvesVehicle owl:propertyChainAxiom (
+  v5:hasEvidence
+  v5:isMovementOf
+) .
+
+#############################
+# PROPERTY CHAINS – EVIDÊNCIA SOBRE ALVOS
+#############################
+
+# Evidência que tem imagem facial que retrata pessoa -> evidência sobre alvo
+v5:evidenceAboutTarget owl:propertyChainAxiom (
+  v5:hasFaceImage
+  v5:depictsPerson
+) .
+
+# Evidência que é mensagem (via hasMessageEvidence) enviada por alvo -> evidência sobre alvo
+v5:evidenceAboutTarget owl:propertyChainAxiom (
+  v5:hasMessageEvidence
+  v5:sentBy
+) .
+
+# Evidência que é mensagem recebida por alvo -> evidência sobre alvo
+v5:evidenceAboutTarget owl:propertyChainAxiom (
+  v5:hasMessageEvidence
+  v5:sentTo
+) .
+
+#############################
+# PROPERTY CHAINS – CASO <-> ALVO VIA EVIDÊNCIA
+#############################
+
+# Caso com evidência sobre alvo -> envolve alvo
+v5:involvesTarget owl:propertyChainAxiom (
+  v5:hasEvidence
+  v5:evidenceAboutTarget
+) .
+
+#############################
+# FUNCIONALIDADE (IDENTIFICADORES ÚNICOS)
+#############################
+
+v5:caseNumber a owl:FunctionalProperty .
+v5:phoneNumberValue a owl:FunctionalProperty .
+v5:deviceIMEI a owl:FunctionalProperty .
+v5:licensePlateNumber a owl:FunctionalProperty .
+v5:renavam a owl:FunctionalProperty .
+v5:chassisNumber a owl:FunctionalProperty .
+
+#############################
+# KEYS (OPCIONAIS, MAS ÚTEIS)
+#############################
+
+# Um Veículo é identificado pela combinação (placa, chassi)
+v5:Vehicle owl:hasKey ( v5:chassisNumber v5:licensePlateNumber ) .
+
+# Um Número de Telefone é identificado pelo próprio valor
+v5:PhoneNumber owl:hasKey ( v5:phoneNumberValue ) .
+
+# Uma Placa é identificada pelo texto da placa
+v5:LicensePlate owl:hasKey ( v5:licensePlateNumber ) .
+
+#############################
+# METADADOS PARA INTENT GENERATION (METADATA-DRIVEN)
+#############################
+# Annotation properties e metadados que permitem geração genérica de intents
+# sem hardcoding de domínio específico no código Python.
+#############################
+
+# do make_v5_intents.py, tornando-o genérico para qualquer ontologia.
+# ============================================================================
+
+# 1. Tipo de Normalização
+v5:normalizationType a owl:AnnotationProperty ;
+    rdfs:label "Tipo de Normalização"@pt , "Normalization Type"@en ;
+    rdfs:comment "Define como a propriedade deve ser normalizada em queries Cypher: 'numeric' (apenas dígitos), 'alphanumeric' (remove -, espaços), 'text' (sem normalização exata), 'text_contains' (busca parcial com CONTAINS)"@pt ;
+    rdfs:range xsd:string .
+
+# 2. Prioridade da Propriedade
+v5:propertyPriority a owl:AnnotationProperty ;
+    rdfs:label "Prioridade da Propriedade"@pt , "Property Priority"@en ;
+    rdfs:comment "Indica a importância da propriedade para intents compostos: 1 (alta - primary identifier), 2 (média), 3 (baixa)"@pt ;
+    rdfs:range xsd:integer .
+
+# 3. Padrões de Exemplo
+v5:examplePattern a owl:AnnotationProperty ;
+    rdfs:label "Padrão de Exemplo"@pt , "Example Pattern"@en ;
+    rdfs:comment "Exemplos de queries em linguagem natural para esta propriedade, separados por | (pipe). Use <VALOR> como placeholder."@pt ;
+    rdfs:range xsd:string .
+
+# 4. Padrões de Exemplo Compostos
+v5:compositeExamplePattern a owl:AnnotationProperty ;
+    rdfs:label "Padrão de Exemplo Composto"@pt , "Composite Example Pattern"@en ;
+    rdfs:comment "Exemplos para queries compostas multi-hop envolvendo esta classe como nó inicial, separados por | (pipe)"@pt ;
+    rdfs:range xsd:string .
+
+# 5. Propriedades Importantes
+v5:hasImportantProperty a owl:AnnotationProperty ;
+    rdfs:label "Tem Propriedade Importante"@pt , "Has Important Property"@en ;
+    rdfs:comment "Lista de propriedades importantes para esta classe (para incluir em intents compostos), separadas por vírgula"@pt ;
+    rdfs:range xsd:string .
+
+# ============================================================================
+# APLICAÇÃO DOS METADADOS ÀS CLASSES
+# ============================================================================
+
+# TARGETPERSON: Propriedades importantes = cpf, personFullName
+v5:TargetPerson 
+    v5:hasImportantProperty "cpf,personFullName" ;
+    v5:compositeExamplePattern "Dono do veículo <VALOR>|De quem é o veículo <VALOR>?|Buscar caso do investigado com CPF <VALOR>|Caso do CPF <VALOR>" .
+
+
+# CASE: Examples compostos para queries multi-hop
+v5:Case 
+    v5:compositeExamplePattern "Caso do veículo placa <VALOR>|Quais casos estão associados ao veículo de placa <VALOR>?|Caso do CPF <VALOR>|Procedimento do CPF <VALOR>" .
+
+# VEHICLE: Examples para entidades relacionadas
+v5:Vehicle 
+    v5:compositeExamplePattern "Veículo do CPF <VALOR>|Carro da placa <VALOR>" .
+
+# ============================================================================
+# APLICAÇÃO DOS METADADOS ÀS DATATYPE PROPERTIES
+# ============================================================================
+
+### PROPRIEDADES NUMÉRICAS (normalizationType = "numeric")
+
+# CPF: High priority, numeric normalization
+v5:cpf 
+    v5:normalizationType "numeric" ;
+    v5:propertyPriority 1 ;
+    v5:examplePattern "CPF <VALOR>|Localizar investigado com CPF <VALOR>|Investigado CPF <VALOR>|Buscar pessoa com CPF <VALOR>" .
+
+# phoneNumberValue: High priority, numeric
+v5:phoneNumberValue 
+    v5:normalizationType "numeric" ;
+    v5:propertyPriority 1 ;
+    v5:examplePattern "Telefone <VALOR>|Celular <VALOR>|Número <VALOR>|Localizar celular <VALOR>" .
+
+# renavam: High priority, numeric
+v5:renavam 
+    v5:normalizationType "numeric" ;
+    v5:propertyPriority 1 ;
+    v5:examplePattern "RENAVAM <VALOR>|Registro <VALOR>|Buscar RENAVAM <VALOR>" .
+
+# deviceIMEI: High priority, numeric
+v5:deviceIMEI 
+    v5:normalizationType "numeric" ;
+    v5:propertyPriority 1 ;
+    v5:examplePattern "IMEI <VALOR>|Equipamento <VALOR>|Dispositivo IMEI <VALOR>|Localizar IMEI <VALOR>" .
+
+# caseNumber: High priority, numeric
+v5:caseNumber 
+    v5:normalizationType "numeric" ;
+    v5:propertyPriority 1 ;
+    v5:examplePattern "Caso <VALOR>|Procedimento <VALOR>|Buscar procedimento <VALOR>|Localizar procedimento <VALOR>|procedimento <VALOR>|Inquérito <VALOR>|Número do caso <VALOR>|Buscar caso <VALOR>" .
+
+### PROPRIEDADES ALFANUMÉRICAS (normalizationType = "alphanumeric")
+
+# licensePlateNumber: High priority, alphanumeric (remove hyphens/spaces)
+v5:licensePlateNumber 
+    v5:normalizationType "alphanumeric" ;
+    v5:propertyPriority 1 ;
+    v5:examplePattern "Placa <VALOR>|Placa ABC-1D23|Placa ABC 1D23|ABC-1D23|Placa do carro <VALOR>|Placa veicular <VALOR>|Buscar placa <VALOR>|Veículo placa <VALOR>" .
+
+### PROPRIEDADES DE TEXTO (normalizationType = "text")
+
+# personFullName: High priority, text (no normalization)
+v5:personFullName 
+    v5:normalizationType "text" ;
+    v5:propertyPriority 1 ;
+    v5:examplePattern "Nome <VALOR>|Pessoa <VALOR>|Buscar pessoa <VALOR>|Nome completo <VALOR>" .
+
+# vehicleBrand: Medium priority, text
+v5:vehicleBrand 
+    v5:normalizationType "text" ;
+    v5:propertyPriority 2 ;
+    v5:examplePattern "Moto <VALOR>|Carro <VALOR>|Veículo <VALOR>|Marca <VALOR>|Buscar veículo marca <VALOR>|Buscar moto <VALOR>" .
+
+# vehicleModel: Medium priority, text
+v5:vehicleModel 
+    v5:normalizationType "text" ;
+    v5:propertyPriority 2 ;
+    v5:examplePattern "Modelo <VALOR>|Veículo modelo <VALOR>|Carro modelo <VALOR>" .
+
+# vehicleYear: Medium priority, text (year is number but no normalization needed)
+v5:vehicleYear 
+    v5:normalizationType "text" ;
+    v5:propertyPriority 2 ;
+    v5:examplePattern "Ano <VALOR>|Veículo ano <VALOR>|Carro ano <VALOR>|Ano do veículo <VALOR>" .
+
+# caseStatus: Low priority, text
+v5:caseStatus 
+    v5:normalizationType "text" ;
+    v5:propertyPriority 3 ;
+    v5:examplePattern "Status <VALOR>|Caso com status <VALOR>|Status do caso <VALOR>" .
+
+# deviceModel: Low priority, text
+v5:deviceModel 
+    v5:normalizationType "text" ;
+    v5:propertyPriority 3 ;
+    v5:examplePattern "Modelo do dispositivo <VALOR>|Aparelho modelo <VALOR>" .
+
+# messageBody: Low priority, text
+v5:messageBody 
+    v5:normalizationType "text" ;
+    v5:propertyPriority 3 ;
+    v5:examplePattern "Mensagem <VALOR>|Mensagem contendo <VALOR>|Texto da mensagem <VALOR>" .
+
+
+############################
+# CRIMES / ACUSAÇÕES / PRISÕES
+############################
+
+v5:Accusation a owl:Class ;
+  rdfs:subClassOf prov:Entity ;
+  rdfs:label "Acusação"@pt , "Accusation"@en ,
+             "acusacao"@pt , "denuncia"@pt , 
+             "crime imputado"@pt , "acusacao criminal"@pt ;
+  rdfs:comment "Acusação formal ou imputação de crime dentro de um caso, associada a alvos, artigos de lei e evidências."@pt ;
+  v5:hasImportantProperty "accusationDescription" .
+
+v5:OffenseType a owl:Class ;
+  rdfs:subClassOf prov:Entity ;
+  rdfs:label "Tipo de Crime"@pt , "Offense Type"@en ,
+             "crime"@pt , "delito"@pt , 
+             "infracao penal"@pt , "trafico de drogas"@pt ,
+             "trafico ilicito de entorpecentes"@pt ;
+  rdfs:comment "Classificação abstrata do delito (ex.: tráfico de drogas, homicídio, roubo)."@pt ;
+  v5:hasImportantProperty "offenseCode" .
+
+v5:LegalArticle a owl:Class ;
+  rdfs:subClassOf schema:Legislation ;
+  rdfs:label "Artigo de Lei"@pt , "Legal Article"@en , "artigo"@pt ;
+  rdfs:comment "Artigo específico de legislação criminal (por exemplo, Lei 11.343/2006, art. 33)."@pt .
+
+v5:Arrest a owl:Class ;
+  rdfs:subClassOf prov:Activity ;
+  rdfs:label "Prisão"@pt , "Arrest"@en ,
+             "prisao"@pt , "prisao em flagrante"@pt ,
+             "ato de prender"@pt , "evento de prisao"@pt ;
+  rdfs:comment "Evento de privação de liberdade de um alvo em um caso, geralmente decorrente de uma acusação criminal."@pt ;
+  v5:compositeExamplePattern "quem foi preso por <VALOR>?|quem foi preso pelo crime de <VALOR>?|listar pessoas presas por <VALOR>" .
+
+
+### Caso tem acusações e prisões
+
+v5:hasAccusation a owl:ObjectProperty ;
+  rdfs:domain v5:Case ;
+  rdfs:range v5:Accusation ;
+  rdfs:label "tem acusação"@pt , "has accusation"@en .
+
+v5:hasArrest a owl:ObjectProperty ;
+  rdfs:domain v5:Case ;
+  rdfs:range v5:Arrest ;
+  rdfs:label "tem prisão"@pt , "has arrest"@en .
+
+### Ligações da acusação
+
+v5:hasAccusedTarget a owl:ObjectProperty ;
+  rdfs:domain v5:Accusation ;
+  rdfs:range v5:TargetPerson ;
+  rdfs:label "tem alvo acusado"@pt , "has accused target"@en .
+
+v5:isAccusedIn a owl:ObjectProperty ;
+  owl:inverseOf v5:hasAccusedTarget ;
+  rdfs:domain v5:TargetPerson ;
+  rdfs:range v5:Accusation ;
+  rdfs:label "é acusado em"@pt , "is accused in"@en .
+
+v5:hasOffenseType a owl:ObjectProperty ;
+  rdfs:domain v5:Accusation ;
+  rdfs:range v5:OffenseType ;
+  rdfs:label "tem tipo de crime"@pt , "has offense type"@en .
+
+v5:hasLegalArticle a owl:ObjectProperty ;
+  rdfs:domain v5:Accusation ;
+  rdfs:range v5:LegalArticle ;
+  rdfs:label "tem artigo de lei"@pt , "has legal article"@en .
+
+### Evidências ligadas à acusação (refina o hasEvidence já existente)
+
+v5:hasAccusationEvidence a owl:ObjectProperty ;
+  rdfs:subPropertyOf v5:hasEvidence ;
+  rdfs:domain v5:Accusation ;
+  rdfs:range v5:EvidenceItem ;
+  rdfs:label "tem evidência da acusação"@pt , "has accusation evidence"@en .
+
+### Ligações da prisão
+
+v5:arrestedTarget a owl:ObjectProperty ;
+  rdfs:domain v5:Arrest ;
+  rdfs:range v5:TargetPerson ;
+  rdfs:label "teve alvo preso"@pt , "arrested target"@en .
+
+v5:arrestLocation a owl:ObjectProperty ;
+  rdfs:domain v5:Arrest ;
+  rdfs:range v5:Location ;
+  rdfs:label "local da prisão"@pt , "arrest location"@en .
+
+v5:arrestRelatesToAccusation a owl:ObjectProperty ;
+  rdfs:domain v5:Arrest ;
+  rdfs:range v5:Accusation ;
+  rdfs:label "relaciona-se à acusação"@pt , "relates to accusation"@en .
+
+
+### Acusações
+
+v5:accusationDescription a owl:DatatypeProperty ;
+  rdfs:domain v5:Accusation ;
+  rdfs:range xsd:string ;
+  rdfs:label "descrição da acusação"@pt , "accusation description"@en ,
+             "acusação"@pt ;
+  v5:normalizationType "text_contains" ;
+  v5:propertyPriority 1 ;
+  v5:examplePattern "trafico de drogas|homicidio|roubo|furto" .
+
+v5:accusationStatus a owl:DatatypeProperty ;
+  rdfs:domain v5:Accusation ;
+  rdfs:range xsd:string ;
+  rdfs:label "status da acusação"@pt , "accusation status"@en ,
+             "situação processual"@pt .
+ 
+### Tipos de crime
+
+### Propriedade: código do tipo de crime
+
+v5:offenseCode a owl:DatatypeProperty ;
+  rdfs:domain v5:OffenseType ;
+  rdfs:range xsd:string ;
+  rdfs:label "código do tipo de crime"@pt , "offense code"@en ,
+             "tipo de crime"@pt , "crime"@pt ,
+             "descricao do crime"@pt , "trafico de drogas"@pt ;
+  v5:normalizationType "text_contains" ;
+  v5:propertyPriority 1 ;
+  v5:examplePattern "trafico de drogas|homicidio|roubo" .
+
+
+### Artigos de lei
+
+v5:articleNumber a owl:DatatypeProperty ;
+  rdfs:domain v5:LegalArticle ;
+  rdfs:range xsd:string ;
+  rdfs:label "número do artigo"@pt , "article number"@en .
+
+v5:lawName a owl:DatatypeProperty ;
+  rdfs:domain v5:LegalArticle ;
+  rdfs:range xsd:string ;
+  rdfs:label "nome da lei"@pt , "law name"@en .
+
+### Prisão
+
+v5:arrestTimestamp a owl:DatatypeProperty ;
+  rdfs:domain v5:Arrest ;
+  rdfs:range xsd:dateTime ;
+  rdfs:label "data/hora da prisão"@pt ,
+             "arrest timestamp"@en ,
+             "quando"@pt , "data prisão"@pt .
+
+
+

@@ -1,0 +1,6 @@
+neo4j
+numpy
+sentence-transformers
+scikit-learn
+torch
+transformers

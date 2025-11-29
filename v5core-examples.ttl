@@ -1,0 +1,346 @@
+@prefix rdf:    <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs:   <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl:    <http://www.w3.org/2002/07/owl#> .
+@prefix xsd:    <http://www.w3.org/2001/XMLSchema#> .
+@prefix foaf:   <http://xmlns.com/foaf/0.1/> .
+@prefix prov:   <http://www.w3.org/ns/prov#> .
+@prefix vcard:  <http://www.w3.org/2006/vcard/ns#> .
+@prefix geo:    <http://www.w3.org/2003/01/geo/wgs84_pos#> .
+@prefix schema: <https://schema.org/> .
+@prefix v5:  <https://ontology.v5.com/v5core#> .
+
+<https://ontology.v5.com/v5core-examples> a owl:Ontology ;
+  owl:imports <https://ontology.v5.com/v5core> ;
+  rdfs:label "Ontologia v5 Core - Exemplos" .
+
+#############################
+# INDIVÍDUOS – EXEMPLO
+#############################
+
+### Unidades
+
+v5:unit_GISEC a v5:Unit ;
+  rdfs:label "GISEC - Unidade de Inteligência" .
+
+v5:unit_DetranRJ a v5:Unit ;
+  rdfs:label "DETRAN-RJ" .
+
+#############################
+# CASOS
+#############################
+
+# Caso 1 – Operação Hydra
+v5:case_C001 a v5:Case ;
+  v5:caseNumber "C001/2025" ;
+  v5:caseName "Operação Hydra" ;
+  v5:caseStatus "Em andamento" ;
+  v5:handledByUnit v5:unit_GISEC .
+
+# Caso 2 – Operação Medusa
+v5:case_C002 a v5:Case ;
+  v5:caseNumber "C002/2025" ;
+  v5:caseName "Operação Medusa" ;
+  v5:caseStatus "Em análise" ;
+  v5:handledByUnit v5:unit_GISEC .
+
+#############################
+# ALVOS (PESSOAS / ORCRIM)
+#############################
+
+# Alvo principal / suspeito
+v5:targetP_001 a v5:TargetPerson ;
+  v5:personFullName "João da Silva" ;
+  v5:cpf "111.222.333-44" .
+
+# Vítima
+v5:targetP_002 a v5:TargetPerson ;
+  v5:personFullName "Maria Oliveira" ;
+  v5:cpf "555.666.777-88" .
+
+# Testemunha
+v5:targetP_003 a v5:TargetPerson ;
+  v5:personFullName "Carlos Souza" ;
+  v5:cpf "999.000.111-22" .
+
+# Organização criminosa
+v5:org_CO001 a v5:CriminalOrganization ;
+  rdfs:label "Orcrim Hidra Vermelha" .
+
+# Relações caso ↔ alvos
+v5:case_C001 v5:hasPrimaryTarget v5:targetP_001 ;
+                v5:hasSuspectTarget v5:targetP_001 ;
+                v5:hasVictimTarget v5:targetP_002 ;
+                v5:hasWitnessTarget v5:targetP_003 .
+
+# Alvo membro de orcrim
+v5:targetP_001 v5:memberOfOrganization v5:org_CO001 .
+
+#############################
+# TELEFONES E DISPOSITIVOS
+#############################
+
+# Telefones
+v5:phone_joao a v5:PhoneNumber ;
+  v5:phoneNumberValue "+5521999990001" .
+
+v5:phone_maria a v5:PhoneNumber ;
+  v5:phoneNumberValue "+5521988880002" .
+
+# Dispositivos
+v5:device_joao a v5:Device ;
+  v5:deviceIMEI "356789012345678" ;
+  v5:deviceModel "Samsung Galaxy S21" .
+
+v5:device_maria a v5:Device ;
+  v5:deviceIMEI "357654321098765" ;
+  v5:deviceModel "iPhone 13" .
+
+# Ligações alvo ↔ telefone ↔ dispositivo
+v5:targetP_001 v5:hasPhoneNumber v5:phone_joao ;
+                  v5:usesDevice     v5:device_joao .
+
+v5:targetP_002 v5:hasPhoneNumber v5:phone_maria ;
+                  v5:usesDevice     v5:device_maria .
+
+#############################
+# UFDR / EXTRAÇÃO
+#############################
+
+# Extração UFDR do dispositivo de João
+v5:ufdr_001 a v5:UFDRExtraction ;
+  rdfs:label "UFDR João - 2025-10-01" ;
+  v5:wasExtractedFromDevice v5:device_joao .
+
+# Evidência digital principal ligada à UFDR (ex: diretório UFDR no disco)
+v5:evidence_UFDR_001 a v5:DigitalEvidence ;
+  rdfs:label "Dump UFDR João" ;
+  v5:belongsToExtraction v5:ufdr_001 .
+
+# Caso 1 tem essa evidência UFDR
+v5:case_C001 v5:hasEvidence v5:evidence_UFDR_001 .
+
+#############################
+# WHATSAPP – CHATS E MENSAGENS
+#############################
+
+# Chat entre João e Maria
+v5:waChat_CH001 a v5:WhatsAppChat ;
+  rdfs:label "Chat João ↔ Maria" ;
+  v5:hasParticipant v5:targetP_001 , v5:targetP_002 .
+
+# Mensagens no chat
+v5:waMsg_M001 a v5:WhatsAppMessage ;
+  v5:messageBody "Transferi o valor combinado." ;
+  v5:messageTimestamp "2025-10-01T10:30:00"^^xsd:dateTime ;
+  v5:sentBy  v5:targetP_001 ;
+  v5:sentTo  v5:targetP_002 ;
+  v5:belongsToChat v5:waChat_CH001 .
+
+v5:waMsg_M002 a v5:WhatsAppMessage ;
+  v5:messageBody "Ok, recebi aqui. Amanhã entrego o material." ;
+  v5:messageTimestamp "2025-10-01T10:32:00"^^xsd:dateTime ;
+  v5:sentBy  v5:targetP_002 ;
+  v5:sentTo  v5:targetP_001 ;
+  v5:belongsToChat v5:waChat_CH001 .
+
+# A extração UFDR “contém” esse chat e suas mensagens
+v5:ufdr_001 v5:hasChat v5:waChat_CH001 .
+v5:waChat_CH001 v5:hasMessage v5:waMsg_M001 , v5:waMsg_M002 .
+
+#############################
+# EVIDÊNCIA – IMAGEM FACIAL / BIOMETRIA
+#############################
+
+# Evidência de imagem facial (foto anexada ao caso)
+v5:evidence_FACE_001 a v5:EvidenceItem ;
+  rdfs:label "Foto de João em frente ao veículo" .
+
+# Arquivo de imagem
+v5:file_FACEIMG_001 a v5:FaceImage ;
+  rdfs:label "face_joao_carro.jpg" ;
+  v5:filePath "/cases/C001/images/face_joao_carro.jpg" ;
+  v5:fileMimeType "image/jpeg" .
+
+# Ligação evidência -> imagem -> alvo
+v5:evidence_FACE_001 v5:hasFaceImage v5:file_FACEIMG_001 .
+v5:file_FACEIMG_001 v5:depictsPerson v5:targetP_001 .
+
+# Caso 1 tem essa evidência facial
+v5:case_C001 v5:hasEvidence v5:evidence_FACE_001 .
+
+# Template biométrico gerado a partir da imagem
+v5:template_FACE_001 a v5:FaceBiometricTemplate ;
+  v5:biometricTemplateType "FACE_EMBEDDING_V1" ;
+  v5:biometricTemplateData "ENCODED_VECTOR_ABC123" .
+
+# Ligação (opcional) evidência -> template
+v5:evidence_FACE_001 v5:hasFaceTemplate v5:template_FACE_001 .
+
+#############################
+# DETRAN – VEÍCULO / PLACA / REGISTRO / MOVIMENTAÇÃO
+#############################
+
+# Veículo de João
+v5:veh_001 a v5:Vehicle ;
+  v5:vehicleBrand "Toyota" ;
+  v5:vehicleModel "Corolla" ;
+  v5:vehicleYear "2018"^^xsd:gYear ;
+  v5:chassisNumber "9BWZZZ377VT004251" .
+
+# Placa do veículo
+v5:plate_ABC1234 a v5:LicensePlate ;
+  v5:licensePlateNumber "ABC1D23" .
+
+# Registro do veículo
+v5:vehReg_001 a v5:VehicleRegistration ;
+  v5:renavam "12345678901" .
+
+# Amarrações
+v5:veh_001 v5:hasLicensePlate       v5:plate_ABC1234 ;
+              v5:hasVehicleRegistration v5:vehReg_001 .
+
+v5:vehReg_001 v5:isRegistrationOf v5:veh_001 .
+
+# João é proprietário do veículo
+v5:targetP_001 v5:ownsVehicle v5:veh_001 .
+
+# Movimentação do veículo (passagem em câmera)
+v5:loc_L001 a v5:Location ;
+  rdfs:label "Av. Brasil, altura 5000 - Rio de Janeiro" .
+
+v5:vehMov_001 a v5:VehicleMovement ;
+  v5:movementTimestamp "2025-10-01T09:50:00"^^xsd:dateTime ;
+  v5:isMovementOf       v5:veh_001 ;
+  v5:movementAtLocation v5:loc_L001 .
+
+# Evidência digital representando o registro DETRAN
+v5:evidence_VEH_REG_001 a v5:EvidenceItem ;
+  rdfs:label "Certidão de registro do veículo Corolla" .
+
+# Evidência digital representando a captura da movimentação
+v5:evidence_VEH_MOV_001 a v5:EvidenceItem ;
+  rdfs:label "Frame de câmera mostrando Corolla na Av. Brasil" .
+
+# Ligação evidência -> veículo (via registro/movimento)
+# (essas duas linhas permitem às property chains inferir involvesVehicle / involvesTarget)
+v5:evidence_VEH_REG_001 v5:hasFile v5:vehReg_001 .
+# v5:evidence_VEH_MOV_001 v5:hasFile v5:vehMov_001 .
+# Arquivo de imagem/vídeo da movimentação
+v5:file_VEH_MOV_001 a v5:ImageFile ;
+  rdfs:label "frame_corolla_av_brasil.jpg" ;
+  v5:filePath "/cases/C001/images/frame_corolla_av_brasil.jpg" ;
+  v5:fileMimeType "image/jpeg" .
+
+# Evidência aponta para o arquivo (não diretamente para a Activity)
+v5:evidence_VEH_MOV_001 v5:hasFile v5:file_VEH_MOV_001 .
+
+# (Opcional) Dizemos que este arquivo diz respeito à movimentação específica
+# (se quiser, podemos depois criar uma propriedade própria, tipo 'representsMovement')
+
+
+# Caso 1 tem essas evidências de veículo
+v5:case_C001 v5:hasEvidence v5:evidence_VEH_REG_001 ,
+                             v5:evidence_VEH_MOV_001 .
+
+#############################
+# CASO 2 – SÓ VEÍCULO E TESTEMUNHA
+#############################
+
+# Caso 2 só com veículo e testemunha, sem WhatsApp
+v5:case_C002 v5:hasWitnessTarget v5:targetP_003 ;
+                v5:hasEvidence      v5:evidence_VEH_MOV_001 .
+
+
+### Tipo de crime: tráfico de drogas
+
+v5:DrugTraffickingOffense a owl:NamedIndividual , v5:OffenseType ;
+  rdfs:label "tráfico de drogas"@pt ,
+             "tráfico de entorpecentes"@pt ,
+             "tráfico ilícito de entorpecentes"@pt ,
+             "drug trafficking"@en ;
+  v5:offenseCode "TRAFICO_DROGAS" .
+
+### Artigo típico: Lei 11.343/2006, art. 33
+
+v5:Lei11343_Art33 a owl:NamedIndividual , v5:LegalArticle ;
+  rdfs:label "Lei 11.343/2006, art. 33"@pt ,
+             "Brazilian Drug Law 11.343/2006, article 33"@en ;
+  v5:articleNumber "33" ;
+  v5:lawName "Lei 11.343/2006 (Lei de Drogas)"@pt .
+
+### Caso, pessoa alvo, local, evidência
+
+v5:Case_2025_0001 a v5:Case ;
+  rdfs:label "Caso 2025/0001 - Tráfico de drogas em Campos"@pt ;
+  v5:hasAccusation v5:Accusation_2025_0001 ;
+  v5:hasArrest v5:Arrest_2025_0001 .
+
+v5:TargetPerson_joao a v5:TargetPerson ;
+  rdfs:label "João da Silva"@pt ;
+  foaf:name "João da Silva"@pt ;
+  v5:cpf "11122233344" .
+
+v5:Location_Campos a v5:Location ;
+  rdfs:label "Campos dos Goytacazes/RJ"@pt .
+
+v5:EvidenceItem_vedacaoWhatsapp a v5:EvidenceItem ;
+  rdfs:label "Prints de conversas de WhatsApp sobre venda de drogas"@pt ;
+  v5:evidenceDescription "Conversas em que o alvo negocia venda de maconha e cocaína."@pt .
+
+
+### Tipo de crime e artigo de lei
+
+v5:DrugTraffickingOffense a v5:OffenseType ;
+  rdfs:label "tráfico de drogas"@pt ;
+  v5:offenseCode "TRAFICO_DROGAS" .
+
+v5:Lei11343_Art33 a v5:LegalArticle ;
+  rdfs:label "Lei 11.343/2006, art. 33"@pt ;
+  v5:articleNumber "33" ;
+  v5:lawName "Lei 11.343/2006 (Lei de Drogas)"@pt .
+
+
+### Acusação
+
+v5:Accusation_2025_0001 a v5:Accusation ;
+  rdfs:label "Acusação de tráfico de drogas contra João da Silva"@pt ;
+  v5:accusationDescription "O alvo João da Silva foi acusado de tráfico de drogas, por suposta comercialização de maconha e cocaína na região de Campos/RJ."@pt ;
+  v5:accusationStatus "DENUNCIADO"@pt ;
+  v5:hasAccusedTarget v5:TargetPerson_joao ;
+  v5:hasOffenseType v5:DrugTraffickingOffense ;
+  v5:hasLegalArticle v5:Lei11343_Art33 ;
+  v5:hasAccusationEvidence v5:EvidenceItem_vedacaoWhatsapp .
+
+
+### Prisão
+
+v5:Arrest_2025_0001 a v5:Arrest ;
+  rdfs:label "Prisão em flagrante de João da Silva"@pt ;
+  v5:arrestTimestamp "2025-11-20T22:15:00-03:00"^^xsd:dateTime ;
+  v5:arrestedTarget v5:TargetPerson_joao ;
+  v5:arrestLocation v5:Location_Campos ;
+  v5:arrestRelatesToAccusation v5:Accusation_2025_0001 .
+
+
+### Exemplo: João da Silva preso por tráfico de drogas
+
+v5:TargetPerson_joao a v5:TargetPerson ;
+  rdfs:label "João da Silva"@pt ;
+  foaf:name "João da Silva"@pt ;
+  v5:cpf "11122233344" .
+
+# Garante que a acusação existente está ligada ao alvo e ao tipo de crime de tráfico
+v5:Accusation_2025_0001 a v5:Accusation ;
+  v5:hasAccusedTarget  v5:TargetPerson_joao ;
+  v5:hasOffenseType    v5:DrugTraffickingOffense .
+
+# Evento de prisão ligado ao alvo e à acusação de tráfico
+v5:Arrest_2025_0001 a v5:Arrest ;
+  rdfs:label "Prisão de João da Silva por tráfico de drogas"@pt ;
+  v5:arrestTimestamp "2025-11-20T22:15:00-03:00"^^xsd:dateTime ;
+  v5:arrestedTarget          v5:TargetPerson_joao ;
+  v5:arrestRelatesToAccusation v5:Accusation_2025_0001 .
+
+### INVERSE RELATIONS FOR TRAVERSAL
+v5:targetP_001 v5:isTargetOf v5:case_C001 .
+v5:plate_ABC1234 v5:isLicensePlateOf v5:veh_001 .
